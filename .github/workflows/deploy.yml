@@ -3,7 +3,7 @@ name: Deploy to SFTP Server
 on:
   push:
     branches:
-      - main  # Change this if you want to deploy from another branch
+      - master  # Change this if you want to deploy from another branch
 
 jobs:
   deploy:
