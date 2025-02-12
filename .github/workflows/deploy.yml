@@ -1,0 +1,41 @@
+name: Deploy to SFTP Server
+
+on:
+  push:
+    branches:
+      - main  # Change this if you want to deploy from another branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod  # 👈 Specify your environment here
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Zip the repository
+      run: zip -r deploy.zip . -x ".git/*"
+
+    - name: Upload to SFTP Server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SFTP_HOST }}
+        username: ${{ secrets.SFTP_USER }}
+        password: ${{ secrets.SFTP_PASSWORD }}
+        port: ${{ secrets.SFTP_PORT }}
+        source: "deploy.zip"
+        target: "${{ secrets.SFTP_TARGET_DIR }}"
+
+    - name: SSH into the server and deploy
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SFTP_HOST }}
+        username: ${{ secrets.SFTP_USER }}
+        password: ${{ secrets.SFTP_PASSWORD }}
+        port: ${{ secrets.SFTP_PORT }}
+        script: |
+          cd ${{ secrets.SFTP_TARGET_DIR }}
+          unzip -o deploy.zip
+          rm deploy.zip
+          echo "Deployment completed successfully!"
