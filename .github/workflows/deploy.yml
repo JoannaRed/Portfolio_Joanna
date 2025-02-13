@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master  # Change this if you want to deploy from another branch
-
+                # JE teste le fonctionnement 
 jobs:
   deploy:
     runs-on: ubuntu-latest
